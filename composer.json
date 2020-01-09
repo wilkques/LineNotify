@@ -1,0 +1,21 @@
+{
+    "name": "wilkques/line-notify",
+    "description": "line-notify",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": ">=7.0",
+        "ext-json": "*",
+        "ext-curl":"*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Wilkques\\LineNotify\\": "src"
+        }
+    },
+    "config": {
+        "preferred-install": {
+            "*": "dist"
+        }
+    }
+}
