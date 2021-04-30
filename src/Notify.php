@@ -2,72 +2,130 @@
 
 namespace Wilkques\LineNotify;
 
-use Wilkques\LineNotify\Curl\HTTPClient\CurlHTTPClient;
+use Wilkques\HttpClient\Http;
 use Wilkques\LineNotify\Enum\UrlEnum;
 
 class Notify
 {
+    /** @var string */
     protected $clientId;
+    /** @var string */
     protected $clientSecret;
-    protected $curl;
-
-    public function __construct($clientId, $clientSecret = null)
+    
+    public function __construct(string $clientId, string $clientSecret = null)
     {
-        $this->clientId = $clientId;
-        $this->clientSecret = $clientSecret;
-        $this->curl = new CurlHTTPClient();
+        $this->setClientId($clientId)->setClientSecret($clientSecret);
     }
 
-    public function generateSubscribeUrl($args = ['state' => 'default'])
+    /**
+     * @param string $clientId
+     * 
+     * @return static
+     */
+    public function setClientId(string $clientId)
+    {
+        $this->clientId = $clientId;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getClientId()
+    {
+        return $this->clientId;
+    }
+
+    /**
+     * @param string $clientSecret
+     * 
+     * @return static
+     */
+    public function setClientSecret(string $clientSecret)
+    {
+        $this->clientSecret = $clientSecret;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getClientSecret()
+    {
+        return $this->clientSecret;
+    }
+
+    /**
+     * @param array $args
+     * 
+     * @return string
+     */
+    public function generateSubscribeUrl(array $args = ['state' => 'default'])
     {
         $params = [
             'response_type' => 'code',
-            'client_id' => $this->clientId,
+            'client_id' => $this->getClientId(),
             'redirect_uri' => $this->getCurrentUrl(),
             'scope' => 'notify'
         ];
+
         $params = array_merge($params, $args);
+
         return UrlEnum::AUTH_URL . '?' . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
     }
 
-    public function requestToken($code, $redirect_uri = null)
+    /**
+     * @param string $code
+     * @param string $redirectUri
+     * 
+     * @return string
+     */
+    public function requestToken(string $code, string $redirectUri = null)
     {
         if (!$this->clientSecret) {
             throw new \UnexpectedValueException('ClientSecret is required');
         }
+
         $params = [
             'grant_type' => 'authorization_code',
-            'client_id' => $this->clientId,
-            'client_secret' => $this->clientSecret,
-            'redirect_uri' => $redirect_uri ? $redirect_uri : $this->getCurrentUrl(),
+            'client_id' => $this->getClientId(),
+            'client_secret' => $this->getClientSecret(),
+            'redirect_uri' => $redirectUri ? $redirectUri : $this->getCurrentUrl(),
             'code' => $code,
         ];
 
-        $response = $this->curl->post(UrlEnum::TOKEN_URL, $params, [
-            'Content-Type: application/x-www-form-urlencoded'
-        ]);
+        $response = Http::asForm()->post(UrlEnum::TOKEN_URL, $params);
 
         $params = $response->getJSONDecodedBody();
 
         if ($params['status'] != 200) {
             throw new \Exception('Request token error::' . $params['message']);
         }
+
         return $params['access_token'];
     }
 
+    /**
+     * @return string
+     */
     private function getCurrentUrl()
     {
         $http = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
         $uri = explode('?', $_SERVER['REQUEST_URI'], 2)[0];
-        return $http . "://$_SERVER[HTTP_HOST]$uri";
+
+        return "$http://{$_SERVER['HTTP_HOST']}$uri";
     }
 
-    public static function sendMessage($token, Message $message)
+    /**
+     * @param string $token
+     * @param Message $message
+     * 
+     * @return \Wilkques\LineNotify\Curl\Response
+     */
+    public static function sendMessage(string $token, Message $message)
     {
-        $curl = new CurlHTTPClient();
-        $curl->setToken($token);
-        return $curl->post(UrlEnum::NOTIFY_URL, $message->build(), [
-            'Content-Type: application/x-www-form-urlencoded'
-        ]);
+        return Http::withToken($token)->post(UrlEnum::NOTIFY_URL, $message->build());
     }
 }

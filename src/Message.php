@@ -4,43 +4,89 @@ namespace Wilkques\LineNotify;
 
 class Message
 {
+    /** @var array */
     protected $message = [];
 
-    public function __construct($text)
+    public function __construct(string $text = '')
     {
-        $this->message['message'] = $text;
+        $this->setMessage($text);
     }
 
-    public function setImageThumbnail($url)
+    /**
+     * @param string $message
+     * 
+     * @return static
+     */
+    public function setMessage(string $message)
+    {
+        $this->message['message'] = $message;
+
+        return $this;
+    }
+
+    /**
+     * @param string $url
+     * 
+     * @return static
+     */
+    public function setImageThumbnail(string $url)
     {
         $this->message['imageThumbnail'] = $url;
+
         return $this;
     }
 
-    public function setImageFullsize($url)
+    /**
+     * @param string $url
+     * 
+     * @return static
+     */
+    public function setImageFullsize(string $url)
     {
         $this->message['imageFullsize'] = $url;
+
         return $this;
     }
 
-    public function setStickerPackageId($packageId)
+    /**
+     * @param integer $packageId
+     * 
+     * @return static
+     */
+    public function setStickerPackageId(int $packageId)
     {
         $this->message['stickerPackageId'] = $packageId;
+
         return $this;
     }
 
-    public function setStickerId($stickerId)
+    /**
+     * @param integer $stickerId
+     * 
+     * @return static
+     */
+    public function setStickerId(int $stickerId)
     {
         $this->message['stickerId'] = $stickerId;
+
         return $this;
     }
 
-    public function setNotificationDisabled($boolean = false)
+    /**
+     * @param boolean $boolean
+     * 
+     * @return static
+     */
+    public function setNotificationDisabled(bool $boolean = false)
     {
         $this->message['notificationDisabled'] = $boolean;
+
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function build()
     {
         return $this->message;

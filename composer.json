@@ -6,7 +6,8 @@
     "require": {
         "php": ">=7.0",
         "ext-json": "*",
-        "ext-curl":"*"
+        "ext-curl":"*",
+        "wilkques/http-client": "dev-master"
     },
     "autoload": {
         "psr-4": {
