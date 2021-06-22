@@ -126,6 +126,6 @@ class Notify
      */
     public static function sendMessage(string $token, Message $message)
     {
-        return Http::withToken($token)->post(UrlEnum::NOTIFY_URL, $message->build());
+        return Http::withToken($token)->asForm()->post(UrlEnum::NOTIFY_URL, $message->build());
     }
 }
