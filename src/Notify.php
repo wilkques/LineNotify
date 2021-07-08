@@ -2,7 +2,9 @@
 
 namespace Wilkques\LineNotify;
 
+use Wilkques\HttpClient\Exception\RequestException;
 use Wilkques\HttpClient\Http;
+use Wilkques\HttpClient\Response;
 use Wilkques\LineNotify\Enum\UrlEnum;
 
 class Notify
@@ -11,18 +13,30 @@ class Notify
     protected $clientId;
     /** @var string */
     protected $clientSecret;
-    
-    public function __construct(string $clientId, string $clientSecret = null)
+    /** @var array */
+    protected $methods = [
+        'clientId', 'clientSecret', 'token'
+    ];
+    /** @var Response */
+    protected $response;
+    /** @var string */
+    protected $token;
+
+    /**
+     * @param string|null $clientId
+     * @param string|null $clientSecret
+     */
+    public function __construct(string $clientId = null, string $clientSecret = null)
     {
         $this->setClientId($clientId)->setClientSecret($clientSecret);
     }
 
     /**
-     * @param string $clientId
+     * @param string|null $clientId
      * 
      * @return static
      */
-    public function setClientId(string $clientId)
+    public function setClientId(string $clientId = null)
     {
         $this->clientId = $clientId;
 
@@ -30,7 +44,7 @@ class Notify
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getClientId()
     {
@@ -38,11 +52,11 @@ class Notify
     }
 
     /**
-     * @param string $clientSecret
+     * @param string|null $clientSecret
      * 
      * @return static
      */
-    public function setClientSecret(string $clientSecret)
+    public function setClientSecret(string $clientSecret = null)
     {
         $this->clientSecret = $clientSecret;
 
@@ -50,11 +64,59 @@ class Notify
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getClientSecret()
     {
         return $this->clientSecret;
+    }
+
+    /**
+     * @throws \UnexpectedValueException
+     * 
+     * @return static
+     */
+    private function checkClientId()
+    {
+        if (!$this->getClientId()) {
+            throw new \UnexpectedValueException('ClientId is required');
+        }
+
+        return $this;
+    }
+
+    /**
+     * @throws \UnexpectedValueException
+     * 
+     * @return static
+     */
+    private function checkClientSecret()
+    {
+        if (!$this->getClientSecret()) {
+            throw new \UnexpectedValueException('ClientSecret is required');
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Response $response
+     * 
+     * @return static
+     */
+    public function setResponse(Response $response)
+    {
+        $this->response = $response;
+
+        return $this;
+    }
+
+    /**
+     * @return Response
+     */
+    public function response()
+    {
+        return $this->response;
     }
 
     /**
@@ -66,7 +128,7 @@ class Notify
     {
         $params = [
             'response_type' => 'code',
-            'client_id' => $this->getClientId(),
+            'client_id' => $this->checkClientId()->getClientId(),
             'redirect_uri' => $this->getCurrentUrl(),
             'scope' => 'notify'
         ];
@@ -80,31 +142,72 @@ class Notify
      * @param string $code
      * @param string $redirectUri
      * 
-     * @return string
+     * @return static
      */
     public function requestToken(string $code, string $redirectUri = null)
     {
-        if (!$this->clientSecret) {
-            throw new \UnexpectedValueException('ClientSecret is required');
-        }
-
         $params = [
             'grant_type' => 'authorization_code',
-            'client_id' => $this->getClientId(),
-            'client_secret' => $this->getClientSecret(),
+            'client_id' => $this->checkClientId()->getClientId(),
+            'client_secret' => $this->checkClientSecret()->getClientSecret(),
             'redirect_uri' => $redirectUri ? $redirectUri : $this->getCurrentUrl(),
             'code' => $code,
         ];
 
-        $response = Http::asForm()->post(UrlEnum::TOKEN_URL, $params);
+        $this->setResponse(
+            Http::asForm()->post(UrlEnum::TOKEN_URL, $params)
+                ->throw(function (Response $response, RequestException $exception) {
+                    if ($response->failed()) {
+                        throw new \Exception('Request token error::' . $exception->getMessage());
+                    }
+                })
+        );
 
-        $params = $response->getJSONDecodedBody();
+        return $this;
+    }
 
-        if ($params['status'] != 200) {
-            throw new \Exception('Request token error::' . $params['message']);
-        }
+    /**
+     * @return array
+     */
+    public function json()
+    {
+        return $this->response()->json();
+    }
 
-        return $params['access_token'];
+    /**
+     * @return mixed
+     */
+    public function getResponseByKey(string $key)
+    {
+        return $this->json()[$key];
+    }
+
+    /**
+     * @return string|null
+     */
+    public function accessToken()
+    {
+        return $this->getResponseByKey('access_token') ?? null;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getToken()
+    {
+        return $this->token;
+    }
+
+    /**
+     * @param string $token
+     * 
+     * @return static
+     */
+    public function setToken(string $token = null)
+    {
+        $this->token = $token ?? $this->token();
+
+        return $this;
     }
 
     /**
@@ -119,13 +222,28 @@ class Notify
     }
 
     /**
-     * @param string $token
      * @param Message $message
      * 
      * @return \Wilkques\LineNotify\Curl\Response
      */
-    public static function sendMessage(string $token, Message $message)
+    public function sendMessage(Message $message)
     {
+        if (!$token = $this->getToken()) throw new \UnexpectedValueException('Token is required');
+
         return Http::withToken($token)->asForm()->post(UrlEnum::NOTIFY_URL, $message->build());
+    }
+
+    public function __call($method, $arguments)
+    {
+        if (in_array($method, $this->methods)) {
+            $method = 'set' . ucfirst($method);
+        }
+
+        return $this->{$method}(...$arguments);
+    }
+
+    public static function __callStatic($method, $arguments)
+    {
+        return (new static)->{$method}(...$arguments);
     }
 }

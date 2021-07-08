@@ -13,13 +13,20 @@ use Wilkques\LineNotify\Notify;
 
 $notify = new Notify('<CHANNEL_ID>');
 $url = $notify->generateSubscribeUrl($options);
+// or
+$url = Notify::clientId('<CHANNEL_ID>')->generateSubscribeUrl($options);
 ````
 # GET TOKEN
 ````php
 use Wilkques\LineNotify\Notify;
 
 $notify = new Notify('<CHANNEL_ID>', '<CHANNEL_SECRET>');
-$token = $notify->requestToken($_GET('code'));
+$token = $notify->requestToken($_GET('code'))->accessToken();
+// or
+$token = Notify::clientId('<CHANNEL_ID>')
+->clientSecret('<CHANNEL_SECRET>')
+->requestToken($_GET('code'))
+->accessToken();
 ````
 
 # PUSH MESSAGE
@@ -28,7 +35,7 @@ use Wilkques\LineNotify\Notify;
 use Wilkques\LineNotify\Message;
 
 $message = new Message('<Notify Text>');
-Notify::sendMessage($token, $message);
+Notify::token($token)->sendMessage($message);
 ````
 
 # REFERENCE
