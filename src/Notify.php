@@ -7,6 +7,11 @@ use Wilkques\HttpClient\Http;
 use Wilkques\HttpClient\Response;
 use Wilkques\LineNotify\Enum\UrlEnum;
 
+/**
+ * @method static clientId() set client id
+ * @method static clientSecret() set client secret
+ * @method static token() set access token
+ */
 class Notify
 {
     /** @var string */
