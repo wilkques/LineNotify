@@ -1,4 +1,8 @@
 # LineNotify
+
+[![Latest Stable Version](https://poser.pugx.org/wilkques/line-notify/v/stable)](https://packagist.org/packages/wilkques/line-notify)
+[![License](https://poser.pugx.org/wilkques/line-notify/license)](https://packagist.org/packages/wilkques/line-notify)
+
 ````
 composer require wilkques/line-notify
 ````
