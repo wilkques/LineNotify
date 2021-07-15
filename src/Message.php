@@ -2,14 +2,51 @@
 
 namespace Wilkques\LineNotify;
 
+/**
+ * @method static static options(array $options)
+ * @method static static message(string $message)
+ * @method static static imageThumbnail(string $imageThumbnail)
+ * @method static static imageFullsize(string $imageFullsize)
+ * @method static static stickerPackageId(int $stickerPackageId)
+ * @method static static stickerId(int $stickerId)
+ * @method static static notificationDisabled(boole $notificationDisabled)
+ */
 class Message
 {
     /** @var array */
-    protected $message = [];
+    protected $options = [];
+    /** @var array */
+    protected $methods = [
+        'options', 'message', 'imageThumbnail', 'imageFullsize', 'stickerPackageId', 'stickerId',
+        'notificationDisabled'
+    ];
 
+    /**
+     * @param string $text
+     */
     public function __construct(string $text = '')
     {
         $this->setMessage($text);
+    }
+
+    /**
+     * @param array $options
+     * 
+     * @param static
+     */
+    public function setOptions(array $options)
+    {
+        $this->options = array_replace_recursive($this->getOptions(), $options);
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->options;
     }
 
     /**
@@ -19,43 +56,43 @@ class Message
      */
     public function setMessage(string $message)
     {
-        $this->message['message'] = $message;
+        $this->setOptions(compact('message'));
 
         return $this;
     }
 
     /**
-     * @param string $url
+     * @param string $imageThumbnail
      * 
      * @return static
      */
-    public function setImageThumbnail(string $url)
+    public function setImageThumbnail(string $imageThumbnail)
     {
-        $this->message['imageThumbnail'] = $url;
+        $this->setOptions(compact('imageThumbnail'));
 
         return $this;
     }
 
     /**
-     * @param string $url
+     * @param string $imageFullsize
      * 
      * @return static
      */
-    public function setImageFullsize(string $url)
+    public function setImageFullsize(string $imageFullsize)
     {
-        $this->message['imageFullsize'] = $url;
+        $this->setOptions(compact('imageFullsize'));
 
         return $this;
     }
 
     /**
-     * @param integer $packageId
+     * @param integer $stickerPackageId
      * 
      * @return static
      */
-    public function setStickerPackageId(int $packageId)
+    public function setStickerPackageId(int $stickerPackageId)
     {
-        $this->message['stickerPackageId'] = $packageId;
+        $this->setOptions(compact('stickerPackageId'));
 
         return $this;
     }
@@ -67,28 +104,48 @@ class Message
      */
     public function setStickerId(int $stickerId)
     {
-        $this->message['stickerId'] = $stickerId;
+        $this->setOptions(compact('stickerId'));
 
         return $this;
     }
 
     /**
-     * @param boolean $boolean
+     * @param boolean $notificationDisabled
      * 
      * @return static
      */
-    public function setNotificationDisabled(bool $boolean = false)
+    public function setNotificationDisabled(bool $notificationDisabled = false)
     {
-        $this->message['notificationDisabled'] = $boolean;
+        $this->setOptions(compact('notificationDisabled'));
 
         return $this;
     }
 
     /**
-     * @return array
+     * @param string $method
+     * @param array $arguments
+     * 
+     * @return static
      */
-    public function build()
+    public function __call(string $method, array $arguments)
     {
-        return $this->message;
+        $method = ltrim(trim($method));
+
+        if (in_array($method, $this->methods)) {
+            $method = 'set' . ucfirst($method);
+        }
+
+        return $this->{$method}(...$arguments);
+    }
+
+    /**
+     * @param string $method
+     * @param array $arguments
+     * 
+     * @return static
+     */
+    public static function __callStatic(string $method, array $arguments)
+    {
+        return (new static)->{$method}(...$arguments);
     }
 }
