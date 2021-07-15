@@ -129,7 +129,7 @@ class Notify
      * @param string $code
      * @param string $redirectUri
      * 
-     * @return static
+     * @return Response
      */
     public function requestToken(string $code, string $redirectUri = null)
     {
@@ -191,7 +191,7 @@ class Notify
     /**
      * @param Message $message
      * 
-     * @return static
+     * @return Response
      */
     public function sendMessage(Message $message)
     {
