@@ -26,6 +26,7 @@ $token = $notify->requestToken($_GET('code'))->accessToken();
 $token = Notify::clientId('<CHANNEL_ID>')
 ->clientSecret('<CHANNEL_SECRET>')
 ->requestToken($_GET('code'))
+->throw() // throw exception
 ->accessToken();
 ````
 
@@ -35,7 +36,13 @@ use Wilkques\LineNotify\Notify;
 use Wilkques\LineNotify\Message;
 
 $message = new Message('<Notify Text>');
-Notify::token($token)->sendMessage($message);
+$response = Notify::token($token)->sendMessage($message);
+
+$response->throw(); // throw exceptions
+
+$response->throw(function ($response, $exception) {
+    // code
+});
 ````
 
 # REFERENCE
