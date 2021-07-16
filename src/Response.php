@@ -134,7 +134,7 @@ class Response
     /**
      * @param mixed $callable
      * 
-     * @throws UnexpectedValueException
+     * @throws \UnexpectedValueException
      * 
      * @return mixed
      */
