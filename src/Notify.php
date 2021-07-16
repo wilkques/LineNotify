@@ -205,11 +205,31 @@ class Notify
     }
 
     /**
+     * @param Http $client
+     * 
+     * @return static
+     */
+    public function setClient(Http $client)
+    {
+        $this->client = $client;
+
+        return $this;
+    }
+
+    /**
      * @return Http
      */
     public function getClient()
     {
-        return $this->client = $this->client ?? new Http;
+        return $this->client;
+    }
+
+    /**
+     * @return Http
+     */
+    public function newClient()
+    {
+        return $this->getClient() ?? $this->setClient(new Http)->getClient();
     }
 
     /**
@@ -228,7 +248,7 @@ class Notify
             return $this->{$method}(...$arguments);
         }
 
-        return $this->getClient()->{$method}(...$arguments);
+        return $this->newClient()->{$method}(...$arguments);
     }
 
     /**
