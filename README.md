@@ -21,11 +21,11 @@ composer require wilkques/line-notify
     use Wilkques\LineNotify\Notify;
 
     $notify = new Notify('<CHANNEL_ID>', '<CHANNEL_SECRET>');
-    $token = $notify->requestToken($_GET('code'))->accessToken();
+    $token = $notify->requestToken($_GET['code'])->accessToken();
     // or
     $token = Notify::clientId('<CHANNEL_ID>')
     ->clientSecret('<CHANNEL_SECRET>')
-    ->requestToken($_GET('code'))
+    ->requestToken($_GET['code'])
     ->throw() // throw exception
     ->accessToken();
     ````
