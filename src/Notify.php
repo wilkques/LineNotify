@@ -2,17 +2,17 @@
 
 namespace Wilkques\LineNotify;
 
-use Wilkques\HttpClient\HTTPClient\CurlHTTPClient;
+use Wilkques\Http\Client;
 use Wilkques\LineNotify\Enum\UrlEnum;
 
 /**
  * @method static static clientId() set client id
  * @method static static clientSecret() set client secret
  * @method static static token() set access token
- * @method \Wilkques\HttpClient\CurlHTTPClient asForm()
- * @method \Wilkques\HttpClient\CurlHTTPClient withToken(string $token, string $type = 'Bearer')
- * @method \Wilkques\HttpClient\CurlHTTPClient post(string $url, array $data, array $query = null)
- * @method \Wilkques\HttpClient\Response throw(callable $callable = null)
+ * @method \Wilkques\Http\Client asForm()
+ * @method \Wilkques\Http\Client withToken(string $token, string $type = 'Bearer')
+ * @method \Wilkques\Http\Client post(string $url, array $data, array $query = null)
+ * @method \Wilkques\Http\Response throw(callable $callable = null)
  */
 class Notify
 {
@@ -26,7 +26,7 @@ class Notify
     ];
     /** @var string */
     protected $token;
-    /** @var CurlHTTPClient */
+    /** @var Client */
     protected $client;
 
     /**
@@ -146,8 +146,8 @@ class Notify
             $this->asForm()->post(UrlEnum::TOKEN_URL, $params)
                 ->throw(
                     function (
-                        \Wilkques\HttpClient\Response $response,
-                        \Wilkques\HttpClient\Exceptions\RequestException $exception
+                        \Wilkques\Http\Response $response,
+                        \Wilkques\Http\Exceptions\RequestException $exception
                     ) {
                         if ($response->failed()) {
                             throw $exception;
@@ -205,11 +205,11 @@ class Notify
     }
 
     /**
-     * @param CurlHTTPClient $client
+     * @param Client $client
      * 
      * @return static
      */
-    public function setClient(CurlHTTPClient $client)
+    public function setClient(Client $client)
     {
         $this->client = $client;
 
@@ -217,7 +217,7 @@ class Notify
     }
 
     /**
-     * @return CurlHTTPClient
+     * @return Client
      */
     public function getClient()
     {
@@ -225,18 +225,18 @@ class Notify
     }
 
     /**
-     * @return CurlHTTPClient
+     * @return Client
      */
     public function newClient()
     {
-        return $this->getClient() ?? $this->setClient(new CurlHTTPClient);
+        return $this->getClient() ?? $this->setClient(new Client);
     }
 
     /**
      * @param string $method
      * @param array $arguments
      * 
-     * @return static|CurlHTTPClient
+     * @return static|Client
      */
     public function __call(string $method, array $arguments)
     {

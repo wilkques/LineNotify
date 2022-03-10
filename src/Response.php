@@ -2,7 +2,7 @@
 
 namespace Wilkques\LineNotify;
 
-use Wilkques\HttpClient\Response as HttpClientResponse;
+use Wilkques\Http\Response as HttpClientResponse;
 
 /**
  * @method static int status()
