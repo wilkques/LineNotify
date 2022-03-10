@@ -47,7 +47,7 @@ composer require wilkques/line-notify
 
     $response->throw(); // throw exceptions
     // or
-    $response->throw(function (\Wilkques\HttpClient\Response $response, \Wilkques\HttpClient\Exceptions\RequestException $exception) {
+    $response->throw(function (\Wilkques\Http\Response $response, \Wilkques\Http\Exceptions\RequestException $exception) {
         // code
         // return exceptions
     });
