@@ -7,7 +7,7 @@
         "php": ">=7.0",
         "ext-json": "*",
         "ext-curl":"*",
-        "wilkques/http-client": "^0.1.3"
+        "wilkques/http-client": "^1.0.0"
     },
     "autoload": {
         "psr-4": {
