@@ -2,17 +2,17 @@
 
 namespace Wilkques\LineNotify;
 
-use Wilkques\HttpClient\Http;
+use Wilkques\HttpClient\HTTPClient\CurlHTTPClient;
 use Wilkques\LineNotify\Enum\UrlEnum;
 
 /**
  * @method static static clientId() set client id
  * @method static static clientSecret() set client secret
  * @method static static token() set access token
- * @method static \Wilkques\HttpClient\Http asForm()
- * @method static \Wilkques\HttpClient\Http withToken(string $token, string $type = 'Bearer')
- * @method static \Wilkques\HttpClient\Response post(string $url, array $data, array $query = null)
- * @method static \Wilkques\HttpClient\Response throw(callable $callable = null)
+ * @method \Wilkques\HttpClient\CurlHTTPClient asForm()
+ * @method \Wilkques\HttpClient\CurlHTTPClient withToken(string $token, string $type = 'Bearer')
+ * @method \Wilkques\HttpClient\CurlHTTPClient post(string $url, array $data, array $query = null)
+ * @method \Wilkques\HttpClient\Response throw(callable $callable = null)
  */
 class Notify
 {
@@ -26,7 +26,7 @@ class Notify
     ];
     /** @var string */
     protected $token;
-    /** @var Http */
+    /** @var CurlHTTPClient */
     protected $client;
 
     /**
@@ -205,11 +205,11 @@ class Notify
     }
 
     /**
-     * @param Http $client
+     * @param CurlHTTPClient $client
      * 
      * @return static
      */
-    public function setClient(Http $client)
+    public function setClient(CurlHTTPClient $client)
     {
         $this->client = $client;
 
@@ -217,7 +217,7 @@ class Notify
     }
 
     /**
-     * @return Http
+     * @return CurlHTTPClient
      */
     public function getClient()
     {
@@ -225,18 +225,18 @@ class Notify
     }
 
     /**
-     * @return Http
+     * @return CurlHTTPClient
      */
     public function newClient()
     {
-        return $this->getClient() ?? $this->setClient(new Http)->getClient();
+        return $this->getClient() ?? $this->setClient(new CurlHTTPClient);
     }
 
     /**
      * @param string $method
      * @param array $arguments
      * 
-     * @return static|Http
+     * @return static|CurlHTTPClient
      */
     public function __call(string $method, array $arguments)
     {

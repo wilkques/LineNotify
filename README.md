@@ -49,7 +49,7 @@ composer require wilkques/line-notify
     // or
     $response->throw(function (\Wilkques\HttpClient\Response $response, \Wilkques\HttpClient\Exceptions\RequestException $exception) {
         // code
-        // must be return exceptions
+        // return exceptions
     });
     ````
 4. Methods
