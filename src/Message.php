@@ -56,9 +56,7 @@ class Message
      */
     public function setMessage(string $message)
     {
-        $this->setOptions(compact('message'));
-
-        return $this;
+        return $this->setOptions(compact('message'));
     }
 
     /**
@@ -68,9 +66,7 @@ class Message
      */
     public function setImageThumbnail(string $imageThumbnail)
     {
-        $this->setOptions(compact('imageThumbnail'));
-
-        return $this;
+        return $this->setOptions(compact('imageThumbnail'));
     }
 
     /**
@@ -80,9 +76,7 @@ class Message
      */
     public function setImageFullsize(string $imageFullsize)
     {
-        $this->setOptions(compact('imageFullsize'));
-
-        return $this;
+        return $this->setOptions(compact('imageFullsize'));
     }
 
     /**
@@ -92,9 +86,7 @@ class Message
      */
     public function setStickerPackageId(int $stickerPackageId)
     {
-        $this->setOptions(compact('stickerPackageId'));
-
-        return $this;
+        return $this->setOptions(compact('stickerPackageId'));
     }
 
     /**
@@ -104,9 +96,7 @@ class Message
      */
     public function setStickerId(int $stickerId)
     {
-        $this->setOptions(compact('stickerId'));
-
-        return $this;
+        return $this->setOptions(compact('stickerId'));
     }
 
     /**
@@ -116,9 +106,7 @@ class Message
      */
     public function setNotificationDisabled(bool $notificationDisabled = false)
     {
-        $this->setOptions(compact('notificationDisabled'));
-
-        return $this;
+        return $this->setOptions(compact('notificationDisabled'));
     }
 
     /**

@@ -3,7 +3,6 @@
 namespace Wilkques\LineNotify;
 
 use Wilkques\HttpClient\Response as HttpClientResponse;
-use Wilkques\LineNotify\Exceptions\RequestException;
 
 /**
  * @method static int status()
@@ -89,61 +88,6 @@ class Response
     public function accessToken()
     {
         return $this->getResponseByKey('access_token') ?? null;
-    }
-
-    /**
-     * @param string|null $token
-     * 
-     * @return Notify
-     */
-    public function setToken(string $token = null)
-    {
-        return $this->getNotify()->setToken($token ?? $this->accessToken());
-    }
-
-    /**
-     * @return RequestException
-     */
-    public function getThrow()
-    {
-        return new RequestException($this);
-    }
-
-    /**
-     * @param callable|null $callback
-     * 
-     * @throws \Wilkques\HttpClient\Exception\RequestException|RequestException
-     * 
-     * @return static
-     */
-    public function throw(callable $callback = null)
-    {
-        $response = $this->getResponse();
-
-        if ($response->failed()) {
-            if ($callback) {
-                throw $this->callableReturnCheck($callback($this, $this->getThrow()));
-            }
-
-            throw $this->getThrow();
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param mixed $callable
-     * 
-     * @throws \UnexpectedValueException
-     * 
-     * @return mixed
-     */
-    protected function callableReturnCheck($callable = null)
-    {
-        if (is_null($callable)) return $this->getThrow();
-        else if (!is_object($callable)) throw new \UnexpectedValueException("throw return must be Exception Object");
-
-        return $callable;
     }
 
     /**

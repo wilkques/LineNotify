@@ -150,7 +150,7 @@ class Notify
                         \Wilkques\HttpClient\Exceptions\RequestException $exception
                     ) {
                         if ($response->failed()) {
-                            throw new \Exception('Request error::' . $exception->getMessage());
+                            throw $exception;
                         }
                     }
                 )

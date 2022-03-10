@@ -7,7 +7,7 @@
 composer require wilkques/line-notify
 ````
 # How to use
-1. GENERATE URL
+1. Generate URL
     ````php
     use Wilkques\LineNotify\Notify;
 
@@ -16,7 +16,7 @@ composer require wilkques/line-notify
     // or
     $url = Notify::clientId('<CHANNEL_ID>')->generateSubscribeUrl($options);
     ````
-2. GET TOKEN
+2. GET Access Token
     ````php
     use Wilkques\LineNotify\Notify;
 
@@ -30,18 +30,26 @@ composer require wilkques/line-notify
     ->accessToken();
     ````
 
-3. PUSH MESSAGE
+3. Push Message
     ````php
     use Wilkques\LineNotify\Notify;
     use Wilkques\LineNotify\Message;
 
+    // Builder Message
     $message = new Message('<Notify Text>');
-    $response = Notify::token($token)->sendMessage($message);
+    // or
+    $message = Message::message('<Notify Text>');
+
+    // Get Response
+    $response = (new Notify)->token('<Access Token>')->sendMessage($message);
+    // or
+    $response = Notify::token('<Access Token>')->sendMessage($message);
 
     $response->throw(); // throw exceptions
-
-    $response->throw(function ($response, $exception) {
+    // or
+    $response->throw(function (\Wilkques\HttpClient\Response $response, \Wilkques\HttpClient\Exceptions\RequestException $exception) {
         // code
+        // must be return exceptions
     });
     ````
 4. Methods
