@@ -108,15 +108,16 @@ class Notify
 
     /**
      * @param array $args
+     * @param string|null $redirectUri
      * 
      * @return string
      */
-    public function generateSubscribeUrl(array $args = ['state' => 'default'])
+    public function generateSubscribeUrl(array $args = ['state' => 'default'], string $redirectUri = null)
     {
         $params = [
             'response_type' => 'code',
             'client_id' => $this->checkClientId()->getClientId(),
-            'redirect_uri' => $this->getCurrentUrl(),
+            'redirect_uri' => $redirectUri ? $redirectUri : $this->getCurrentUrl(),
             'scope' => 'notify'
         ];
 
@@ -182,10 +183,11 @@ class Notify
      */
     private function getCurrentUrl()
     {
-        $http = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
-        $uri = explode('?', $_SERVER['REQUEST_URI'], 2)[0];
+        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
 
-        return "$http://{$_SERVER['HTTP_HOST']}$uri";
+        $uri = data_get(parse_url($_SERVER['REQUEST_URI']), 'path');
+
+        return sprintf("%s://%s%s", $protocol, $_SERVER['HTTP_HOST'], $uri);
     }
 
     /**
