@@ -6,10 +6,10 @@
 # Notice
 This repository has been archived because the official feature it relied on has been discontinued.
 
+# How to use
 ````
 composer require wilkques/line-notify
 ````
-# How to use
 1. Generate URL
     ````php
     use Wilkques\LineNotify\Notify;
