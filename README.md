@@ -3,6 +3,9 @@
 [![Latest Stable Version](https://poser.pugx.org/wilkques/line-notify/v/stable)](https://packagist.org/packages/wilkques/line-notify)
 [![License](https://poser.pugx.org/wilkques/line-notify/license)](https://packagist.org/packages/wilkques/line-notify)
 
+# Notice
+This repository has been archived because the official feature it relied on has been discontinued.
+
 ````
 composer require wilkques/line-notify
 ````
